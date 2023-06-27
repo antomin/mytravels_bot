@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mytravels-bot"
+version = "0.1.0"
+description = ""
+authors = ["Anton Mindlin <anton.mindlin@gmail.com>"]
+readme = "README.md"
+packages = [{include = "mytravels_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.2.2"
+aiogram = "^2.25.1"
+environs = "^9.5.0"
+pillow = "^9.5.0"
+apscheduler = "^3.10.1"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
