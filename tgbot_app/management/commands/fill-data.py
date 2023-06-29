@@ -1,43 +1,56 @@
+import time
+
 import requests
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 
-from tgbot_app.models import Country, City, Airport, Airline
+from tgbot_app.models import (Airline, Airport, AviaCity, AviaCountry,
+                              ExcursionCity, ExcursionCountry)
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        url_countries = 'https://api.travelpayouts.com/aviasales_resources/v3/countries.json?locale=ru'
-        url_cities = 'https://api.travelpayouts.com/aviasales_resources/v3/cities.json?locale=ru'
-        url_airports = 'https://api.travelpayouts.com/aviasales_resources/v3/airports.json?locale=ru'
-        url_airlines = 'https://api.travelpayouts.com/aviasales_resources/v3/airlines.json?locale=ru'
+        self.fill_avia_countries()
+        self.fill_avia_cities()
+        self.fill_airlines()
+        self.fill_airports()
 
-        countries = self.get_request(url_countries)
+        self.fill_excursions_countries()
+        self.fill_excursions_cities()
+
+    def fill_avia_countries(self):
+        url = 'https://api.travelpayouts.com/aviasales_resources/v3/countries.json?locale=ru'
+        countries = self.get_aviasales_request(url)
         countries_len = len(countries)
         cnt = 1
 
         for country in countries:
             try:
-                Country.objects.create(code=country['code'], title=country['name'])
+                AviaCountry.objects.create(code=country['code'], title=country['name'])
                 print(f'{cnt} страна из {countries_len} добавлена')
                 cnt += 1
             except IntegrityError:
                 pass
 
-        cities = self.get_request(url_cities)
+    def fill_avia_cities(self):
+        url = 'https://api.travelpayouts.com/aviasales_resources/v3/cities.json?locale=ru'
+        cities = self.get_aviasales_request(url)
         cities_len = len(cities)
         cnt = 1
 
         for city in cities:
             try:
-                country = Country.objects.get(code=city['country_code'])
-                City.objects.create(code=city['code'], title=city['name'], country=country)
+                country = AviaCountry.objects.get(code=city['country_code'])
+                AviaCity.objects.create(code=city['code'], title=city['name'], country=country)
                 print(f'{cnt} город из {cities_len} добавлен')
                 cnt += 1
             except IntegrityError:
                 pass
 
-        airports = self.get_request(url_airports)
+    def fill_airports(self):
+        url = 'https://api.travelpayouts.com/aviasales_resources/v3/airports.json?locale=ru'
+        airports = self.get_aviasales_request(url)
         airports_len = len(airports)
         cnt = 1
 
@@ -49,7 +62,9 @@ class Command(BaseCommand):
             except IntegrityError:
                 pass
 
-        airlines = self.get_request(url_airlines)
+    def fill_airlines(self):
+        url = 'https://api.travelpayouts.com/aviasales_resources/v3/airlines.json?locale=ru'
+        airlines = self.get_aviasales_request(url)
         airlines_len = len(airlines)
         cnt = 1
 
@@ -62,13 +77,75 @@ class Command(BaseCommand):
             except IntegrityError:
                 pass
 
-        print('DONE!')
+    def fill_excursions_countries(self):
+        url = 'https://api.sputnik8.com/v1/countries'
+        page = 1
+        all_countries = []
+        cnt = 1
+
+        while True:
+            countries = self.get_sputnik_request(url, page)
+            if not countries:
+                break
+            all_countries += countries
+            time.sleep(2)
+            page += 1
+
+        countries_len = len(all_countries)
+
+        for country in all_countries:
+            try:
+                ExcursionCountry.objects.create(id=country['id'], title=country['name'])
+                print(f'{cnt} страна из {countries_len} добавлена')
+                cnt += 1
+            except IntegrityError as error:
+                print(error)
+                pass
+
+    def fill_excursions_cities(self):
+        url = 'https://api.sputnik8.com/v1/cities'
+        page = 1
+        all_cities = []
+        cnt = 1
+
+        while True:
+            cities = self.get_sputnik_request(url, page)
+            if not cities:
+                break
+            all_cities += cities
+            time.sleep(2)
+            page += 1
+
+        cities_len = len(all_cities)
+
+        for city in all_cities:
+            try:
+                country = ExcursionCountry.objects.get(id=city['country_id'])
+                ExcursionCity.objects.create(id=city['id'], title=city['name'], country=country)
+                print(f'{cnt} город из {cities_len} добавлена')
+                cnt += 1
+            except IntegrityError as error:
+                print(error)
+                pass
 
     @staticmethod
-    def get_request(url):
+    def get_aviasales_request(url):
         headers = {
             'Accept-Encoding': 'gzip, deflate, br'
         }
         response = requests.get(url=url, headers=headers)
         return response.json()
 
+    @staticmethod
+    def get_sputnik_request(url, page=None):
+        params = {
+            'api_key': settings.SPUTNIK_API,
+            'username': settings.SPUTNIK_USERNAME,
+            'limit': 20
+        }
+        if page:
+            params['page'] = page
+
+        response = requests.get(url, params=params)
+
+        return response.json()

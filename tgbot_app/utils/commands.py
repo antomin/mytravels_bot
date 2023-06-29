@@ -8,6 +8,6 @@ async def set_default_commands(dp: Dispatcher):
         BotCommand('start', 'Перезапуск бота'),
         BotCommand('avia', 'Поиск авиабилетов'),
         BotCommand('currency', 'Курсы валют'),
-        BotCommand('tours', 'Горящие туры'),
+        BotCommand('excursions', 'Экскурсии'),
         BotCommand('hotels', 'Поиск отелей'),
     ])

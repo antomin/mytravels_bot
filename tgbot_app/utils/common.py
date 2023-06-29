@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from tgbot_app.models import Airport, Airline
+from tgbot_app.models import Airline, Airport
 
 
 async def date_validate(date):
@@ -58,3 +58,36 @@ async def gen_avia_result_text(data):
     text += f'<b>Цена:</b> <i>{price}₽</i>'
 
     return text
+
+
+async def gen_excursion_result_text(data):
+    title = data.get('title')
+    rating = data.get('customers_review_rating', '-')
+    start_point = data.get('begin_place', {}).get('address', '-')
+    finish_point = data.get('finish_point', '-')
+    price = data.get('minimal_price', '-')
+    desc = data.get('short_info')
+    places_to_see = data.get('places_to_see', '').replace('\r', '')
+    what_included = data.get('what_included', '').replace('\r', '') if data['what_included'] else None
+    what_not_included = data.get('what_not_included').replace('\r', '') if data['what_not_included'] else None
+
+    text = f'<b>{title}</b>\n\n<i>Cредняя оценка:</i> <b>{rating}</b>\n\n'
+
+    if start_point:
+        text += f'<i>Начальная точка:</i> <b>{start_point}</b>\n'
+    if finish_point:
+        text += f'<i>Конечная точка:</i> <b>{finish_point}</b>\n\n'
+    if desc:
+        text += f'<i>{desc}</i>\n\n'
+    if places_to_see:
+        text += f'<i>Главные места:\n</i> <b>{places_to_see}</b>\n\n'
+    if what_included:
+        text += f'<i>Включено в стоимость:\n</i> <b>{what_included}</b>\n\n'
+    if what_not_included:
+        text += f'<i>Не включено в стоимость:\n</i> <b>{what_not_included}</b>\n\n'
+
+    text += f'<i>Цена:</i> <b>от {price}</b>'
+
+    return text
+
+

@@ -1,7 +1,6 @@
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.types import Message
-
 from django.conf import settings
 
 from tgbot_app.loader import bot

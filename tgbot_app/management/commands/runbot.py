@@ -1,9 +1,11 @@
 from aiogram import Dispatcher
 from aiogram.utils import executor
 from django.core.management.base import BaseCommand
-from tgbot_app.utils import set_default_commands
+
 from tgbot_app.handlers import dp
-from tgbot_app.middlewares import CheckProfileMiddleware, CheckSubscriptionMiddleware
+from tgbot_app.middlewares import (CheckProfileMiddleware,
+                                   CheckSubscriptionMiddleware)
+from tgbot_app.utils import set_default_commands
 
 
 async def register_middlewares(_dp: Dispatcher):

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+
 from environs import Env
 
 env = Env()
@@ -168,9 +169,13 @@ CHANNEL_NAME = env.str('CHANNEL_NAME')
 # App settings
 
 ITEMS_FOR_PAGE = 20
+EXCURSIONS_FOR_PAGE = 10
 
 
 # 3rd API
 
 AVIASALES_TOKEN = env.str('AVIASALES_TOKEN')
 AVIASALES_PARTNER_URL = env.str('AVIASALES_PARTNER_URL')
+
+SPUTNIK_API = env.str('SPUTNIK_API')
+SPUTNIK_USERNAME = env.str('SPUTNIK_USERNAME')

@@ -16,31 +16,33 @@ class Profile(models.Model):
         verbose_name_plural = 'пользователи'
 
     def __str__(self):
-        return self.tgid
+        return f'{self.tgid} | {self.username}'
 
 
-class Country(models.Model):
+class AviaCountry(models.Model):
     code = models.CharField(verbose_name='код', max_length=4, primary_key=True, db_index=True)
     title = models.CharField(verbose_name='название', max_length=100)
+    priority = models.IntegerField(verbose_name='приоритет', default=300)
 
     class Meta:
-        verbose_name = 'страна'
-        verbose_name_plural = 'страны'
-        ordering = ('title', )
+        verbose_name = 'страна авиасейлс'
+        verbose_name_plural = 'страны авиасейлс'
+        ordering = ('priority', 'title', )
 
     def __str__(self):
         return f'{self.title}({self.code})'
 
 
-class City(models.Model):
+class AviaCity(models.Model):
     code = models.CharField(verbose_name='код', max_length=4, primary_key=True, db_index=True)
     title = models.CharField(verbose_name='название', max_length=100)
-    country = models.ForeignKey(to=Country, verbose_name='страна', on_delete=models.CASCADE)
+    country = models.ForeignKey(to=AviaCountry, verbose_name='страна', on_delete=models.CASCADE)
+    priority = models.IntegerField(verbose_name='приоритет', default=300)
 
     class Meta:
-        verbose_name = 'город'
-        verbose_name_plural = 'города'
-        ordering = ('title', )
+        verbose_name = 'город авиасейлс'
+        verbose_name_plural = 'города авиасейлс'
+        ordering = ('priority', 'title', )
 
     def __str__(self):
         return f'{self.title}({self.code}) | {self.country.title}'
@@ -68,3 +70,32 @@ class Airline(models.Model):
 
     def __str__(self):
         return f'{self.title}({self.code})'
+
+
+class ExcursionCountry(models.Model):
+    id = models.IntegerField(verbose_name='ID', primary_key=True, db_index=True)
+    title = models.CharField(verbose_name='название', max_length=100)
+    priority = models.IntegerField(verbose_name='приоритет', default=300)
+
+    class Meta:
+        verbose_name = 'страна экскурсии'
+        verbose_name_plural = 'страны экскурсии'
+        ordering = ('id', )
+
+    def __str__(self):
+        return f'{self.title}({self.id})'
+
+
+class ExcursionCity(models.Model):
+    id = models.IntegerField(verbose_name='ID', primary_key=True, db_index=True)
+    title = models.CharField(verbose_name='название', max_length=100)
+    country = models.ForeignKey(to=ExcursionCountry, verbose_name='страна', on_delete=models.CASCADE)
+    priority = models.IntegerField(verbose_name='приоритет', default=300)
+
+    class Meta:
+        verbose_name = 'страна экскурсии'
+        verbose_name_plural = 'страны экскурсии'
+        ordering = ('id',)
+
+    def __str__(self):
+        return f'{self.title}({self.id})'
