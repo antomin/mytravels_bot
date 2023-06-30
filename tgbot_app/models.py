@@ -99,3 +99,22 @@ class ExcursionCity(models.Model):
 
     def __str__(self):
         return f'{self.title}({self.id})'
+
+
+class FlightSubscription(models.Model):
+    user = models.ForeignKey(Profile, verbose_name='пользователь', on_delete=models.CASCADE)
+    depart_city = models.ForeignKey(AviaCity, verbose_name='город отправления', related_name='subscription_depart_city',
+                                    on_delete=models.CASCADE)
+    arrival_city = models.ForeignKey(AviaCity, verbose_name='город прибытия', related_name='subscription_arrival_city',
+                                     on_delete=models.CASCADE)
+    depart_date = models.DateField(verbose_name='дата отправления')
+    return_date = models.DateField(verbose_name='дата возвращения', blank=True, null=True)
+    is_direct = models.BooleanField(verbose_name='без пересадок')
+    last_price = models.IntegerField(verbose_name='последняя цена')
+
+    class Meta:
+        verbose_name = 'подписка на билет'
+        verbose_name_plural = 'подписки на билеты'
+
+    def __str__(self):
+        return f'{self.user.tgid} | {self.depart_city.title} - {self.arrival_city.title} | {self.depart_date}'

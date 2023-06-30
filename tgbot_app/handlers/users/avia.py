@@ -11,17 +11,22 @@ from tgbot_app.loader import aviasales, dp
 from tgbot_app.states import AviaState
 from tgbot_app.utils.common import date_validate, gen_avia_result_text
 from tgbot_app.utils.db_api import (gen_paginator, get_avia_cities,
-                                    get_avia_countries)
+                                    get_avia_countries, create_flight_subscription, del_flight_subscribe)
+from tgbot_app.utils.text_variables import AVIA_SUB_TEXT
 
 
 @dp.callback_query_handler(avia_cd.filter(action='countries_page'), state=AviaState)
 @dp.message_handler(Command('avia'), state='*')
+@dp.message_handler(Command('avia_sub'), state='*')
 async def countries_list(message: Message | CallbackQuery, state: FSMContext):
     target = 'depart'
 
     await AviaState.depart_country.set()
     async with state.proxy() as data:
         data['target'] = target
+        is_sub = data.get('is_sub')
+        if is_sub is None and message.text == '/avia_sub':
+            data['is_sub'] = True
 
     if isinstance(message, CallbackQuery):
         await message.answer()
@@ -183,6 +188,7 @@ async def set_direct(callback: CallbackQuery, callback_data: dict, state: FSMCon
 
     is_direct = callback_data.get('value')
     async with state.proxy() as data:
+        is_sub = data.get('is_sub')
         depart_code = data['depart']
         arrival_code = data['arrival']
         date_depart = data['date_depart']
@@ -193,20 +199,38 @@ async def set_direct(callback: CallbackQuery, callback_data: dict, state: FSMCon
         arrival_code=arrival_code,
         date_depart=date_depart,
         date_return=date_return,
-        is_direct=is_direct
+        is_direct=is_direct,
+        one_result=is_sub
     )
 
     await status.delete()
 
     if not data:
         await callback.message.answer('К сожалению на выбранную дату нет рейсов')
+        await state.reset_state()
         return
 
     for flight in data:
         text = await gen_avia_result_text(flight)
-        markup = await gen_flight_kb(flight['link'])
+
+        sub_id = None
+        if is_sub:
+            sub_id = await create_flight_subscription(user_id=callback.from_user.id, flight=flight, is_direct=is_direct)
+            text = AVIA_SUB_TEXT + text
+
+        partner_url = await aviasales.gen_link(flight['link'])
+        markup = await gen_flight_kb(partner_url, is_sub=is_sub, sub_id=sub_id)
 
         await callback.message.answer(text=text, reply_markup=markup)
         await asyncio.sleep(0.5)
 
     await state.reset_state()
+
+
+@dp.callback_query_handler(avia_cd.filter(action='unsubscribe'), state='*')
+async def unsubscribe_flight(callback: CallbackQuery, callback_data: dict):
+    sub_id = callback_data.get('value')
+    await del_flight_subscribe(sub_id)
+
+    await callback.message.answer('Вы успешно отписались от рассылки.')
+    await callback.answer()

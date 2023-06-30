@@ -1,6 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
-from django.conf import settings
 
 avia_cd = CallbackData('avia', 'action', 'value', 'page')
 
@@ -54,9 +53,16 @@ async def gen_direct_kb():
     return markup
 
 
-async def gen_flight_kb(url):
-    return InlineKeyboardMarkup().add(InlineKeyboardButton(text='Забронировать',
-                                                           url=f'{settings.AVIASALES_PARTNER_URL}{url}'))
+async def gen_flight_kb(url, is_sub=None, sub_id=None):
+    markup = InlineKeyboardMarkup(row_width=1)
+
+    markup.add(InlineKeyboardButton(text='Забронировать', url=url))
+
+    if is_sub:
+        markup.add(InlineKeyboardButton(text='Отписаться', callback_data=avia_cd.new(action='unsubscribe', value=sub_id,
+                                                                                     page='0')))
+
+    return markup
 
 
 async def gen_return_date_kb():

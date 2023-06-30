@@ -7,7 +7,7 @@ async def set_default_commands(dp: Dispatcher):
     await dp.bot.set_my_commands([
         BotCommand('start', 'Перезапуск бота'),
         BotCommand('avia', 'Поиск авиабилетов'),
-        BotCommand('currency', 'Курсы валют'),
+        BotCommand('avia_sub', 'Подписка на билеты'),
         BotCommand('excursions', 'Экскурсии'),
-        BotCommand('hotels', 'Поиск отелей'),
+        BotCommand('currency', 'Курсы валют'),
     ])
