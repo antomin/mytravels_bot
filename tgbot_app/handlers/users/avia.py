@@ -10,8 +10,9 @@ from tgbot_app.keyboards import (avia_cd, gen_avia_cities_kb,
 from tgbot_app.loader import aviasales, dp
 from tgbot_app.states import AviaState
 from tgbot_app.utils.common import date_validate, gen_avia_result_text
-from tgbot_app.utils.db_api import (gen_paginator, get_avia_cities,
-                                    get_avia_countries, create_flight_subscription, del_flight_subscribe)
+from tgbot_app.utils.db_api import (create_flight_subscription,
+                                    del_flight_subscribe, gen_paginator,
+                                    get_avia_cities, get_avia_countries)
 from tgbot_app.utils.text_variables import AVIA_SUB_TEXT
 
 

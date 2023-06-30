@@ -3,7 +3,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from django.conf import settings
 
-from tgbot_app.utils.services_api import Aviasales, Sputnik, Exchangerate
+from tgbot_app.utils.services_api import Aviasales, Exchangerate, Sputnik
 
 storage = MemoryStorage()
 bot = Bot(token=settings.TG_TOKEN, parse_mode='html')

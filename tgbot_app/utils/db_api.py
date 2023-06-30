@@ -1,8 +1,8 @@
+from datetime import datetime
+
 from asgiref.sync import sync_to_async
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
-
-from datetime import datetime
 
 from adv_app.models import Adv
 from core import settings
