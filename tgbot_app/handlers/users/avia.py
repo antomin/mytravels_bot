@@ -159,7 +159,7 @@ async def ask_depart_date(callback: CallbackQuery):
 async def set_depart_date(message: Message | CallbackQuery, state: FSMContext):
     if isinstance(message, CallbackQuery):
         await message.answer()
-        date = None
+        date = ''
         message = message.message
     else:
         date = message.text
@@ -207,6 +207,6 @@ async def set_direct(callback: CallbackQuery, callback_data: dict, state: FSMCon
         markup = await gen_flight_kb(flight['link'])
 
         await callback.message.answer(text=text, reply_markup=markup)
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
 
     await state.reset_state()
