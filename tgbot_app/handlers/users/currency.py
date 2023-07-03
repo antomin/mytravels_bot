@@ -1,8 +1,8 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
-from tgbot_app.keyboards import gen_help_currency_kb, currency_cd
+from tgbot_app.keyboards import currency_cd, gen_help_currency_kb
 from tgbot_app.loader import dp, exchange
 from tgbot_app.utils.decos import reset_state
 from tgbot_app.utils.text_variables import CURRENCY_TEXT

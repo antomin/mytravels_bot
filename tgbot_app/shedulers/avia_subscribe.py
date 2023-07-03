@@ -1,10 +1,11 @@
+import asyncio
+from datetime import datetime
+
 from tgbot_app.keyboards import gen_flight_kb
+from tgbot_app.loader import aviasales, bot
 from tgbot_app.models import FlightSubscription
 from tgbot_app.utils.common import gen_avia_result_text
-from tgbot_app.utils.db_api import get_subscribes, get_subscribe_data
-from datetime import datetime
-from tgbot_app.loader import bot, aviasales
-import asyncio
+from tgbot_app.utils.db_api import get_subscribe_data, get_subscribes
 
 
 async def notify_user(user_id, data, sub_id):

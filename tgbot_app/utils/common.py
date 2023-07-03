@@ -96,5 +96,5 @@ async def gen_excursion_result_text(data):
 async def notify_admins(text):
     admins = await get_admins()
 
-    for admin in admins:
+    async for admin in admins:
         await bot.send_message(chat_id=admin.tgid, text=text)

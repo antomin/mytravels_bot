@@ -1,13 +1,15 @@
+from datetime import datetime
+
 from asgiref.sync import sync_to_async
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
-
-from datetime import datetime
 
 from adv_app.models import Adv
 from core import settings
 from tgbot_app.models import (AviaCity, AviaCountry, ExcursionCity,
                               ExcursionCountry, FlightSubscription, Profile)
+
+from django.utils import timezone
 
 
 @sync_to_async
@@ -110,7 +112,7 @@ def get_adv():
     adverts = Adv.objects.filter(enabled=True)
     list_paid, list_unpaid, list_all = [], [], []
     for adv in adverts:
-        if adv.time_exec <= datetime.now():
+        if adv.time_exec <= timezone.now():
             adv.enabled = False
             adv.save()
             if adv.target == 'paid':
@@ -123,10 +125,10 @@ def get_adv():
 
 
 @sync_to_async
-def get_users_id(subscribed=None):
-    if subscribed is None:
+def get_users_id(is_subscriber=None):
+    if is_subscriber is None:
         return [user.tgid for user in Profile.objects.filter(is_active=True)]
-    return [user.tgid for user in Profile.objects.filter(is_active=True, subscribed=subscribed)]
+    return [user.tgid for user in Profile.objects.filter(is_active=True, is_subscriber=is_subscriber)]
 
 
 @sync_to_async

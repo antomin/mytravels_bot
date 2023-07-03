@@ -1,5 +1,6 @@
-from tgbot_app.loader import dp
 from aiogram.types import Update
+
+from tgbot_app.loader import dp
 
 
 @dp.errors_handler()

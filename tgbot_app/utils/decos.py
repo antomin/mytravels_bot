@@ -2,7 +2,7 @@ import asyncio
 import time
 from functools import wraps
 
-from aiogram.utils.exceptions import BotBlocked, UserDeactivated, ChatNotFound
+from aiogram.utils.exceptions import BotBlocked, ChatNotFound, UserDeactivated
 
 from tgbot_app.utils.db_api import deactivate_user
 

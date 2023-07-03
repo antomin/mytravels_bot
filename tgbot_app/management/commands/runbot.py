@@ -6,8 +6,8 @@ from tgbot_app.handlers import dp
 from tgbot_app.loader import scheduler
 from tgbot_app.middlewares import (CheckProfileMiddleware,
                                    CheckSubscriptionMiddleware)
-from tgbot_app.shedulers import check_flights, adv_mailing
-from tgbot_app.utils import set_default_commands
+from tgbot_app.shedulers import adv_mailing, check_flights
+from tgbot_app.utils.commands import set_default_commands
 
 
 async def register_middlewares(_dp: Dispatcher):
