@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from tgbot_app.loader import bot
 from tgbot_app.models import Airline, Airport
+from tgbot_app.utils.db_api import get_admins
 
 
 async def date_validate(date):
@@ -91,3 +93,8 @@ async def gen_excursion_result_text(data):
     return text
 
 
+async def notify_admins(text):
+    admins = await get_admins()
+
+    for admin in admins:
+        await bot.send_message(chat_id=admin.tgid, text=text)
