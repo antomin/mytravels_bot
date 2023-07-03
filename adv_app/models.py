@@ -3,7 +3,7 @@ from django.db import models
 
 class AdvPhoto(models.Model):
     title = models.CharField(verbose_name='название', max_length=100)
-    url = models.ImageField(verbose_name='изображение', upload_to='adv_images')
+    url = models.FileField(verbose_name='изображение', upload_to='adv_images')
 
     class Meta:
         verbose_name = 'изображение'
@@ -26,9 +26,16 @@ class AdvButton(models.Model):
 
 
 class Adv(models.Model):
+    __TARGET = (
+        ('paid', 'подписчики'),
+        ('unpaid', 'не подписчики'),
+        ('all', 'все')
+    )
+
     title = models.CharField(verbose_name='название кампании', max_length=100, unique=True)
     text = models.TextField(verbose_name='текст')
     time_exec = models.DateTimeField(verbose_name='время запуска')
+    target = models.CharField(verbose_name='аудитория', choices=__TARGET, max_length=10, default='unpaid')
     enabled = models.BooleanField(verbose_name='включена', default=False)
     photos = models.ManyToManyField(AdvPhoto, verbose_name='вложенные изображения', blank=True)
     buttons = models.ManyToManyField(AdvButton, verbose_name='кнопки', blank=True)

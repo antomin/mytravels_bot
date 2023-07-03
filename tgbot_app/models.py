@@ -8,6 +8,9 @@ class Profile(models.Model):
     username = models.CharField(verbose_name='имя пользователя', max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(verbose_name='администратор', default=False)
     is_active = models.BooleanField(verbose_name='активен', default=True)
+    is_subscriber = models.BooleanField(verbose_name='подписчик', default=False)
+    end_subscription = models.DateTimeField(verbose_name='окончание подписки', blank=True, null=True)
+    pay_cnt = models.IntegerField(verbose_name='попытки списания', default=0)
     created_at = models.DateTimeField(verbose_name='время создания', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='последнее обновление', auto_now=True)
 

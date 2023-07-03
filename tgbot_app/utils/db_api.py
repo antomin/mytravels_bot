@@ -9,6 +9,24 @@ from core import settings
 from tgbot_app.models import (AviaCity, AviaCountry, ExcursionCity,
                               ExcursionCountry, FlightSubscription, Profile)
 
+from django.utils import timezone
+
+
+@sync_to_async
+def get_all_objects(obj):
+    return obj.all()
+
+
+@sync_to_async
+def deactivate_user(user_id):
+    try:
+        user = Profile.objects.get(tgid=user_id)
+        user.is_active = False
+        user.save()
+    except:
+        pass
+
+
 
 @sync_to_async
 def get_avia_countries(search=None):
@@ -91,4 +109,28 @@ def get_subscribe_data(subscribe: FlightSubscription):
 
 @sync_to_async
 def get_adv():
-    return Adv.objects.filter()
+    adverts = Adv.objects.filter(enabled=True)
+    list_paid, list_unpaid, list_all = [], [], []
+    for adv in adverts:
+        if adv.time_exec <= timezone.now():
+            adv.enabled = False
+            adv.save()
+            if adv.target == 'paid':
+                list_paid.append(adv)
+            elif adv.target == 'unpaid':
+                list_unpaid.append(adv)
+            else:
+                list_all.append(adv)
+    return {'paid': list_paid, 'unpaid': list_unpaid, 'all': list_all}
+
+
+@sync_to_async
+def get_users_id(is_subscriber=None):
+    if is_subscriber is None:
+        return [user.tgid for user in Profile.objects.filter(is_active=True)]
+    return [user.tgid for user in Profile.objects.filter(is_active=True, is_subscriber=is_subscriber)]
+
+
+@sync_to_async
+def get_admins():
+    return Profile.objects.filter(is_active=True, is_admin=True)
