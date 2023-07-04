@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 
 from .models import AviaCity, AviaCountry, Profile
 
@@ -22,3 +23,6 @@ class AviaCityAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'priority')
     list_editable = ('priority',)
     search_fields = ('title',)
+
+
+admin.site.unregister(Group)

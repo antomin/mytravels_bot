@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 
 from adv_app.models import Adv
 from core import settings
+from payments_app.models import Order
 from tgbot_app.models import (AviaCity, AviaCountry, ExcursionCity,
                               ExcursionCountry, FlightSubscription, Profile)
 
@@ -25,7 +26,6 @@ def deactivate_user(user_id):
         user.save()
     except:
         pass
-
 
 
 @sync_to_async
@@ -134,3 +134,16 @@ def get_users_id(is_subscriber=None):
 @sync_to_async
 def get_admins():
     return Profile.objects.filter(is_active=True, is_admin=True)
+
+
+@sync_to_async
+def gen_order(user_id, amount, prev_order=False):
+    user = Profile.objects.get(tgid=user_id)
+    order = Order.objects.create(user=user, amount=amount)
+    if prev_order:
+        prev_order = Order.objects.filter(user=user, is_paid=True).last()
+        order.prev_order = prev_order
+        order.save()
+        return order.id, prev_order.id
+
+    return order.id

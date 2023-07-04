@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'accounts_app',
     'adv_app',
     'tgbot_app',
+    'payments_app',
 ]
 
 MIDDLEWARE = [
@@ -100,7 +101,6 @@ else:
             'PORT': env.int('DB_PORT'),
         }
     }
-
 
 
 # Password validation
@@ -161,6 +161,7 @@ AUTH_USER_MODEL = 'accounts_app.CustomUser'
 # Telegram bot settings
 
 TG_TOKEN = env.str('TG_TOKEN')
+TG_NAME = env.str('TG_NAME')
 CHANNEL_ID = env.int('CHANNEL_ID')
 CHANNEL_LINK = env.str('CHANNEL_LINK')
 CHANNEL_NAME = env.str('CHANNEL_NAME')
@@ -170,6 +171,7 @@ CHANNEL_NAME = env.str('CHANNEL_NAME')
 
 ITEMS_FOR_PAGE = 20
 EXCURSIONS_FOR_PAGE = 10
+SUBSCRIPTION_PRICE = 15
 
 
 # 3rd API
@@ -180,4 +182,6 @@ AVIASALES_MARKER = env.str('AVIASALES_MARKER')
 SPUTNIK_API_TOKEN = env.str('SPUTNIK_API_TOKEN')
 SPUTNIK_USERNAME = env.str('SPUTNIK_USERNAME')
 
-EXCHANGERATES_API_TOKEN = env.str('EXCHANGERATES_API_TOKEN')
+ROBOKASSA_LOGIN = env.str('ROBOKASSA_LOGIN')
+ROBOKASSA_PASS_1 = env.str('ROBOKASSA_PASS_1')
+ROBOKASSA_PASS_2 = env.str('ROBOKASSA_PASS_2')

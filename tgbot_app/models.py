@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 
 
 class Profile(models.Model):
@@ -20,6 +22,18 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.tgid} | {self.username}'
+
+    def subscribe(self):
+        self.is_subscriber = True
+        self.end_subscription = timezone.now() + timedelta(days=30)
+        self.pay_cnt = 0
+        self.save()
+
+    async def unsubscribe(self):
+        self.is_subscriber = False
+        self.pay_cnt = 0
+        self.end_subscription = None
+        self.save()
 
 
 class AviaCountry(models.Model):

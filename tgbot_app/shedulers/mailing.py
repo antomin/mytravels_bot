@@ -19,10 +19,10 @@ async def _send_text_adv(user_id, text, markup):
 
 @adv_sending_control
 async def _send_photo_adv(user_id, text, photo_path, markup):
-    async with semaphore_mailing:
-        photo = InputFile(photo_path)
-        media_type = photo_path.split('.')[-1]
+    photo = InputFile(photo_path)
+    media_type = photo_path.split('.')[-1]
 
+    async with semaphore_mailing:
         if media_type in ('mp4', 'gif'):
             await bot.send_animation(chat_id=user_id, animation=photo, caption=text, reply_markup=markup)
         else:
@@ -33,9 +33,9 @@ async def _send_photo_adv(user_id, text, photo_path, markup):
 
 @adv_sending_control
 async def _send_mediagroup_adv(user_id, text, photos, markup):
-    async with semaphore_mailing:
-        media = [InputMediaPhoto(InputFile(f'{settings.MEDIA_ROOT}/{photo.url}')) for photo in photos]
+    media = [InputMediaPhoto(InputFile(f'{settings.MEDIA_ROOT}/{photo.url}')) async for photo in photos]
 
+    async with semaphore_mailing:
         await bot.send_media_group(chat_id=user_id, media=media)
         await bot.send_message(chat_id=user_id, text=text, reply_markup=markup, disable_web_page_preview=True)
 
@@ -48,7 +48,7 @@ async def _adv_sending_process(adv, users):
     await notify_admins(f'Рассылка {adv.title} стартовала для {users_cnt} пользователей.')
 
     text = adv.text
-    buttons = await get_all_objects(adv.photos)
+    buttons = await get_all_objects(adv.buttons)
     photos = await get_all_objects(adv.photos)
     markup = await gen_adv_kb(buttons) if await buttons.acount() else None
     tasks = []
@@ -59,7 +59,7 @@ async def _adv_sending_process(adv, users):
 
     elif await photos.acount() == 1:
         photo = await photos.afirst()
-        photo_path = f'{settings.MEDIA_ROOT}/{photo.url}'
+        photo_path = photo.url.path
         for user_id in users:
             tasks.append(asyncio.create_task(_send_photo_adv(user_id, text, photo_path, markup)))
 
